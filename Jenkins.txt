@@ -43,5 +43,28 @@ pipeline {
                  }
             }
         }
+        
+        stage('Build Docker Image') {
+            steps {
+                    script {
+                        def customWorkspace = "/home/billa/Desktop/SPE_Mini_Project/"
+                        ws(customWorkspace){
+                            checkout scm   
+                            docker.build("${DOCKER_IMAGE_NAME}", '.')
+                         }
+                     }        
+                }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                script {
+                    docker.withRegistry('', 'DockerHubCred') {
+                        sh "docker tag ${DOCKER_IMAGE_NAME}:latest ${DOCKER_IMAGE_NAME}:latest"
+                        sh "docker push ${DOCKER_IMAGE_NAME}:latest"
+                    }
+                }
+            }
+        }
     }
 }
