@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY_CREDENTIALS = 'DockerHubCred'
+        DOCKER_IMAGE_NAME = 'billa258/first'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [[url: 'https://github.com/BillaAbhi258/SPE_Mini_Project.git']]
+                ])
+            }
+        }
+
+        stage('build') {
+            steps {
+              script{
+                   def customWorkspace = "/home/billa/Desktop/SPE_Mini_Project/"
+                   ws(customWorkspace){
+                     checkout scm   
+                     sh 'mvn clean package'   
+                   }
+                 }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+               script{
+                   def customWorkspace = "/home/billa/Desktop/SPE_Mini_Project/"
+                   ws(customWorkspace){
+                     checkout scm   
+                     sh 'mvn test'   
+                   }
+                 }
+            }
+        }
+    }
+}
