@@ -23,10 +23,10 @@ pipeline {
         stage('build') {
             steps {
               script{
-                   def customWorkspace = "/home/billa/Desktop/SPE_Mini_Project/"
-                   ws(customWorkspace){
-                     checkout scm   
-                     sh 'mvn clean package'   
+                    dir("/home/billa/Desktop/SPE_Mini_Project/"){
+                        checkout scm   
+                        sh 'mvn clean package'   
+                    }
                    }
                  }
             }
